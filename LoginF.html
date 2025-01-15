@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Travel Booking - Login</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f8ff;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .form-container {
+            background: white;
+            padding: 20px 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .form-container h2 {
+            margin-bottom: 20px;
+            font-size: 24px;
+            text-align: center;
+            color: #333;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        .form-group input:focus {
+            border-color: #007bff;
+            outline: none;
+            box-shadow: 0 0 4px rgba(0, 123, 255, 0.5);
+        }
+
+        .form-group .error {
+            color: red;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        .submit-btn {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .submit-btn:hover {
+           background-color: #45a049;
+        }
+
+        .submit-btn:message {
+            margin-top: 10px;
+            font-size: 14px;
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="form-container">
+    <h2>Admin Log in</h2>
+    <form id="loginForm">
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" required>
+            <div class="error" id="emailError"></div>
+        </div>
+
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" required>
+            <div class="error" id="passwordError"></div>
+        </div>
+        <p class="forgot-password"><a href="#" onclick="forgotPassword()">Forgot Password?</a></p>
+
+        <button type="submit" class="submit-btn">Login</button>
+    </form>
+</div>
+
+<script>
+    document.getElementById('loginForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        let isValid = true;
+
+        // Clear previous errors
+        document.querySelectorAll('.error').forEach(error => error.textContent = '');
+
+        // Validate email
+        const email = document.getElementById('email').value.trim();
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (email === '' || !emailRegex.test(email)) {
+            document.getElementById('emailError').textContent = 'Valid email is required';
+            isValid = false;
+        }
+
+        // Validate password
+        const password = document.getElementById('password').value.trim();
+        if (password === '') {
+            document.getElementById('passwordError').textContent = 'Password is required';
+            isValid = false;
+        }
+
+        if (isValid) {
+            alert('Login successful!');
+            // Proceed with login logic here
+        }
+    });
+</script>
+
+</body>
+</html>
+
+
+/*2) Admin forgot password*/
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forgot Password</title>
+
+    <style>
+        /* CSS styling */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .forgot-password-container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        h2 {
+            color: #333;
+        }
+
+        input {
+            padding: 10px;
+            margin: 10px 0;
+            width: 100%;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .message {
+            margin-top: 10px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Forgot Password Form -->
+    <div class="forgot-password-container">
+        <h2>Forgot Password</h2>
+        <p>Enter your email to receive a password reset link:</p>
+        <input type="email" id="email" placeholder="Enter your email" required>
+        <button id="reset-button">Send Reset Link</button>
+        <p id="message" class="message"></p>
+    </div>
+
+    <script>
+        // JavaScript functionality for Forgot Password
+        document.getElementById('reset-button').addEventListener('click', function () {
+            const email = document.getElementById('email').value;
+            const message = document.getElementById('message');
+
+            // Validate email (basic validation for demo purposes)
+            if (email === '') {
+                message.textContent = 'Please enter your email.';
+                message.style.color = 'red';
+                return;
+            }
+
+            // Simulate sending the reset link
+            message.textContent = `A password reset link has been sent to ${email}.`;
+            message.style.color = 'green';
+
+            // Clear the input field
+            document.getElementById('email').value = '';
+        });
+    </script>
+
+</body>
+</html>
+
+
+/*3)Admin change Password*/
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Change Password</title>
+
+    <style>
+        /* CSS Styling */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .change-password-container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        h2 {
+            color: #333;
+        }
+
+        input {
+            padding: 10px;
+            margin: 10px 0;
+            width: 100%;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .message {
+            margin-top: 10px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Change Password Form -->
+    <div class="change-password-container">
+        <h2>Change Password</h2>
+        <label for="password">Old Password:</label>
+        <input type="password" id="old-password" placeholder="Enter old password" required>
+        <label for="password"> New Password:</label>
+        <input type="password" id="new-password" placeholder="Enter new password" required>
+        <label for="password">Confirm Password:</label>
+        <input type="password" id="confirm-password" placeholder="Confirm new password" required>
+        <button id="change-password-button">Submit</button>
+        <button id="change-password-button">Reset</button>
+      <p id="message" class="message"></p>
+    </div>
+
+    <script>
+        // JavaScript functionality for Change Password
+        document.getElementById('change-password-button').addEventListener('click', function () {
+            const currentPassword = document.getElementById('current-password').value;
+            const newPassword = document.getElementById('new-password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+            const message = document.getElementById('message');
+
+            // Simulated current password for demo purposes
+            const simulatedCurrentPassword = 'password123';
+
+            // Validate the inputs
+            if (currentPassword === '') {
+                message.textContent = 'Please enter your current password.';
+                message.style.color = 'red';
+                return;
+            }
+            if (currentPassword !== simulatedCurrentPassword) {
+                message.textContent = 'Current password is incorrect.';
+                message.style.color = 'red';
+                return;
+            }
+            if (newPassword === '' || confirmPassword === '') {
+                message.textContent = 'Please fill in all fields.';
+                message.style.color = 'red';
+                return;
+            }
+            if (newPassword !== confirmPassword) {
+                message.textContent = 'New passwords do not match.';
+                message.style.color = 'red';
+                return;
+            }
+            if (newPassword.length < 6) {
+                message.textContent = 'New password must be at least 6 characters long.';
+                message.style.color = 'red';
+                return;
+            }
+
+            // Simulate a successful password change
+            message.textContent = 'Password successfully changed!';
+            message.style.color = 'green';
+
+            // Clear the input fields
+            document.getElementById('current-password').value = '';
+            document.getElementById('new-password').value = '';
+            document.getElementById('confirm-password').value = '';
+        });
+    </script>
+
+</body>
+</html>
+
+/*4) admind change password validation/*
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Change Password</title>
+
+    <style>
+        /* CSS styling */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .change-password-container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        h2 {
+            color: #333;
+        }
+
+        input {
+            padding: 10px;
+            margin: 10px 0;
+            width: 100%;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .message {
+            margin-top: 10px;
+            font-size: 14px;
+        }
+
+        .error {
+            color: red;
+        }
+
+        .success {
+            color: green;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Change Password Form -->
+    <div class="change-password-container">
+        <h2>Change Password</h2>
+        <label for="password">Old Password:</label>
+        <input type="password" id="old-password" placeholder="Enter old password" required>
+        <label for="password"> New Password:</label>
+        <input type="password" id="new-password" placeholder="Enter new password" required>
+        <label for="password">Confirm Password:</label>
+        <input type="password" id="confirm-password" placeholder="Confirm new password" required>
+        <button id="change-password-button">Submit</button>
+        <button id="change-password-button">Reset</button>
+
+        <p id="message" class="message"></p>
+    </div>
+
+    <script>
+        // JavaScript for Change Password Validation
+        document.getElementById('change-password-btn').addEventListener('click', function () {
+            const newPassword = document.getElementById('new-password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+            const message = document.getElementById('message');
+
+            // Password validation criteria
+            const minLength = 8;
+            const hasUppercase = /[A-Z]/.test(newPassword);
+            const hasLowercase = /[a-z]/.test(newPassword);
+            const hasNumber = /\d/.test(newPassword);
+
+            // Check if the new password meets all criteria
+            if (newPassword.length < minLength) {
+                message.textContent = 'Password must be at least 8 characters long.';
+                message.className = 'message error';
+                return;
+            }
+
+            if (!hasUppercase) {
+                message.textContent = 'Password must include at least one uppercase letter.';
+                message.className = 'message error';
+                return;
+            }
+
+            if (!hasLowercase) {
+                message.textContent = 'Password must include at least one lowercase letter.';
+                message.className = 'message error';
+                return;
+            }
+
+            if (!hasNumber) {
+                message.textContent = 'Password must include at least one number.';
+                message.className = 'message error';
+                return;
+            }
+
+            // Check if passwords match
+            if (newPassword !== confirmPassword) {
+                message.textContent = 'Passwords do not match. Please try again.';
+                message.className = 'message error';
+                return;
+            }
+
+            // Success message
+            message.textContent = 'Password successfully changed!';
+            message.className = 'message success';
+
+            // Clear input fields
+            document.getElementById('new-password').value = '';
+            document.getElementById('confirm-password').value = '';
+        });
+    </script>
+
+</body>
+</html>
+
+
+
