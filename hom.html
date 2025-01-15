@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Go Trip - Authentication</title>
+    <style>
+        .auth-container {
+            max-width: 400px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-section {
+            display: none;
+        }
+
+        .form-section.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+
+        .form-group input,
+        .form-group button {
+            width: 100%;
+            padding: 0.8rem;
+            font-size: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .form-group button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        .form-group button:hover {
+            background-color: #0056b3;
+        }
+
+        .auth-links {
+            text-align: center;
+            margin-top: 1rem;
+        }
+
+        .auth-links a {
+            color: #007bff;
+            text-decoration: none;
+            margin: 0 0.5rem;
+        }
+
+        .auth-links a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-container">
+        <!-- Login Section -->
+        <div id="login-section" class="form-section active">
+            <h2>Login</h2>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="login-email">Email</label>
+                    <input type="email" id="login-email" name="email" placeholder="Enter your email" required>
+                </div>
+                <div class="form-group">
+                    <label for="login-password">Password</label>
+                    <input type="password" id="login-password" name="password" placeholder="Enter your password" required>
+                </div>
+                <div class="form-group">
+                    <button type="button" id="login-btn">Login</button>
+                </div>
+            </form>
+            <div class="auth-links">
+                <a href="#" id="forgot-password-link">Forgot Password?</a>
+                <a href="#" id="register-link">Register</a>
+            </div>
+        </div>
+
+        <!-- Registration Section -->
+        <div id="register-section" class="form-section">
+            <h2>Register</h2>
+            <form id="registerForm">
+                <div class="form-group">
+                    <label for="register-name">Name</label>
+                    <input type="text" id="register-name" name="name" placeholder="Enter your name" required>
+                </div>
+                <div class="form-group">
+                    <label for="register-email">Email</label>
+                    <input type="email" id="register-email" name="email" placeholder="Enter your email" required>
+                </div>
+                <div class="form-group">
+                    <label for="register-password">Password</label>
+                    <input type="password" id="register-password" name="password" placeholder="Enter your password" required>
+                </div>
+                <div class="form-group">
+                    <label for="confirm-password">Confirm Password</label>
+                    <input type="password" id="confirm-password" name="confirm-password" placeholder="Confirm your password" required>
+                </div>
+                <p id="error-message" class="error-message" style="display: none;">Passwords do not match!</p>
+                <div class="form-group">
+                    <button type="submit">Register</button>
+                </div>
+            </form>
+            <div class="auth-links">
+                <a href="#" id="login-link">Back to Login</a>
+            </div>
+        </div>
+
+        <!-- Forgot Password Section -->
+        <div id="forgot-password-section" class="form-section">
+            <h2>Forgot Password</h2>
+            <form id="forgotPasswordForm">
+                <div class="form-group">
+                    <label for="forgot-email">Email</label>
+                    <input type="email" id="forgot-email" name="email" placeholder="Enter your email" required>
+                </div>
+                <div class="form-group">
+                    <button type="submit">Send Reset Link</button>
+                </div>
+            </form>
+            <div class="auth-links">
+                <a href="#" id="login-link-forgot">Back to Login</a>
+            </div>
+        </div>
+
+        <!-- Change Password Section -->
+        <div id="change-password-section" class="form-section">
+            <h2>Change Password</h2>
+            <form id="changePasswordForm">
+                <div class="form-group">
+                    <label for="new-password">New Password</label>
+                    <input type="password" id="new-password" name="new-password" placeholder="Enter your new password" required>
+                </div>
+                <div class="form-group">
+                    <label for="confirm-new-password">Confirm Password</label>
+                    <input type="password" id="confirm-new-password" name="confirm-password" placeholder="Confirm your new password" required>
+                </div>
+                <div class="form-group">
+                    <button type="submit">Change Password</button>
+                </div>
+            </form>
+            <div class="auth-links">
+                <a href="#" id="login-link-change">Back to Login</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script to Handle Form Navigation -->
+    <script>
+        const sections = {
+            login: document.getElementById('login-section'),
+            register: document.getElementById('register-section'),
+            forgotPassword: document.getElementById('forgot-password-section'),
+            changePassword: document.getElementById('change-password-section')
+        };
+
+        const links = {
+            forgotPassword: document.getElementById('forgot-password-link'),
+            register: document.getElementById('register-link'),
+            loginFromForgot: document.getElementById('login-link-forgot'),
+            loginFromChange: document.getElementById('login-link-change'),
+            loginFromRegister: document.getElementById('login-link')
+        };
+
+        function showSection(section) {
+            Object.values(sections).forEach(sec => sec.classList.remove('active'));
+            sections[section].classList.add('active');
+        }
+ 
+        const registerForm = document.getElementById('registerForm');
+        const passwordInput = document.getElementById('register-password');
+        const confirmPasswordInput = document.getElementById('confirm-password');
+        const errorMessage = document.getElementById('error-message');
+
+        registerForm.addEventListener('submit', (event) => {
+            event.preventDefault();
+
+            // Check if passwords match
+            if (passwordInput.value !== confirmPasswordInput.value) {
+                errorMessage.style.display = 'block';
+            } else {
+                errorMessage.style.display = 'none';
+                alert('Registration successful!');
+                registerForm.reset(); // Reset the form
+            }
+        });
+
+        links.forgotPassword.addEventListener('click', () => showSection('forgotPassword'));
+        links.register.addEventListener('click', () => showSection('register'));
+        links.loginFromForgot.addEventListener('click', () => showSection('login'));
+        links.loginFromChange.addEventListener('click', () => showSection('login'));
+        links.loginFromRegister.addEventListener('click', () => showSection('login'));
+    </script>
+</body>
+</html>
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Go Trip - Authentication</title>
+    <style>
+        .auth-container {
+            max-width: 400px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-section {
+            display: none;
+        }
+
+        .form-section.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+
+        .form-group input,
+        .form-group button {
+            width: 100%;
+            padding: 0.8rem;
+            font-size: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .form-group button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        .form-group button:hover {
+            background-color: #0056b3;
+        }
+
+        .auth-links {
+            text-align: center;
+            margin-top: 1rem;
+        }
+
+        .auth-links a {
+            color: #007bff;
+            text-decoration: none;
+            margin: 0 0.5rem;
+        }
+
+        .auth-links a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-container">
+        <!-- Login Section -->
+        <div id="login-section" class="form-section active">
+            <h2>Login</h2>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="login-email">Email</label>
+                    <input type="email" id="login-email" name="email" placeholder="Enter your email" required>
+                </div>
+                <div class="form-group">
+                    <label for="login-password">Password</label>
+                    <input type="password" id="login-password" name="password" placeholder="Enter your password" required>
+                </div>
+                <div class="form-group">
+                    <button type="button" id="login-btn">Login</button>
+                </div>
+            </form>
+            <div class="auth-links">
+                <a href="#" id="forgot-password-link">Forgot Password?</a>
+                <a href="#" id="register-link">Register</a>
+            </div>
+        </div>
+
+        <!-- Registration Section -->
+        <div id="register-section" class="form-section">
+            <h2>Register</h2>
+            <form id="registerForm">
+                <div class="form-group">
+                    <label for="register-name">Name</label>
+                    <input type="text" id="register-name" name="name" placeholder="Enter your name" required>
+                </div>
+                <div class="form-group">
+                    <label for="register-email">Email</label>
+                    <input type="email" id="register-email" name="email" placeholder="Enter your email" required>
+                </div>
+                <div class="form-group">
+                    <label for="register-password">Password</label>
+                    <input type="password" id="register-password" name="password" placeholder="Enter your password" required>
+                </div>
+                <div class="form-group">
+                    <label for="confirm-password">Confirm Password</label>
+                    <input type="password" id="confirm-password" name="confirm-password" placeholder="Confirm your password" required>
+                </div>
+                <p id="error-message" class="error-message" style="display: none;">Passwords do not match!</p>
+                <div class="form-group">
+                    <button type="submit">Register</button>
+                </div>
+            </form>
+            <div class="auth-links">
+                <a href="#" id="login-link">Back to Login</a>
+            </div>
+        </div>
+
+        <!-- Forgot Password Section -->
+        <div id="forgot-password-section" class="form-section">
+            <h2>Forgot Password</h2>
+            <form id="forgotPasswordForm">
+                <div class="form-group">
+                    <label for="forgot-email">Email</label>
+                    <input type="email" id="forgot-email" name="email" placeholder="Enter your email" required>
+                </div>
+                <div class="form-group">
+                    <button type="submit">Send Reset Link</button>
+                </div>
+            </form>
+            <div class="auth-links">
+                <a href="#" id="login-link-forgot">Back to Login</a>
+            </div>
+        </div>
+
+        <!-- Change Password Section -->
+        <div id="change-password-section" class="form-section">
+            <h2>Change Password</h2>
+            <form id="changePasswordForm">
+                <div class="form-group">
+                    <label for="new-password">New Password</label>
+                    <input type="password" id="new-password" name="new-password" placeholder="Enter your new password" required>
+                </div>
+                <div class="form-group">
+                    <label for="confirm-new-password">Confirm Password</label>
+                    <input type="password" id="confirm-new-password" name="confirm-password" placeholder="Confirm your new password" required>
+                </div>
+                <div class="form-group">
+                    <button type="submit">Change Password</button>
+                </div>
+            </form>
+            <div class="auth-links">
+                <a href="#" id="login-link-change">Back to Login</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script to Handle Form Navigation -->
+    <script>
+        const registerForm = document.getElementById('registerForm');
+        const passwordInput = document.getElementById('register-password');
+        const confirmPasswordInput = document.getElementById('confirm-password');
+        const errorMessage = document.getElementById('error-message');
+
+// Adding event listener to the registration form submit
+registerForm.addEventListener('submit', (event) => {
+    // Prevent the form from actually submitting
+    event.preventDefault();
+
+    // Check if the passwords match
+    if (passwordInput.value !== confirmPasswordInput.value) {
+        // Display the error message if passwords don't match
+        errorMessage.style.display = 'block';
+    } else {
+        // Hide the error message if passwords match
+        errorMessage.style.display = 'none';
+
+        // Simulate successful registration (replace with your actual API call)
+        alert('Registration successful!');
+        
+        // Reset only the necessary fields or clear the form
+        registerForm.reset();
+    }
+}); 
+const loginBtn = document.getElementById('login-btn');
+const loginForm = document.getElementById('loginForm');
+const emailInput = document.getElementById('login-email');
+const passwordInput = document.getElementById('login-password');
+
+// Adding event listener to the login button
+loginBtn.addEventListener('click', (event) => {
+    event.preventDefault();
+
+    // Get values from form inputs
+    const email = emailInput.value;
+    const password = passwordInput.value;
+
+    // Basic client-side validation for empty fields
+    if (!email || !password) {
+        alert("Please fill in both the email and password.");
+        return;
+    }
+
+    // Simulated authentication check (this should be replaced with a real API request)
+    if (email === "test@example.com" && password === "password123") {
+        alert("Login successful!");
+        // Here, you could redirect to a different page, or display a success message.
+        loginForm.reset();  // Reset the form after successful login
+    } else {
+        alert("Invalid email or password.");
+    }
+});
+
+
+    </script>
+</body>
+</html>
+
